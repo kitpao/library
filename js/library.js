@@ -120,7 +120,6 @@ const libraryModule = ((doc) => {
   function addLastBook() {
     const lastBook = generateBookHTML(myLibrary[id]);
     containerTable.appendChild(lastBook);
-    id += 1;
   }
 
   function hideForm() {
@@ -162,6 +161,7 @@ const libraryModule = ((doc) => {
       if (book.title !== '') {
         addBookToLibrary(book);
         addLastBook();
+        id += 1;
       }
       hideForm();
       resetFields();
