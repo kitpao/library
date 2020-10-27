@@ -26,6 +26,12 @@ const libraryModule = ((doc) => {
     form.reset();
   }
 
+  function deleteBook(row) {
+    const bookIndexToDelete = row.getAttribute('data-index');
+    myLibrary.splice(bookIndexToDelete, 1);
+    containerTable.removeChild(row);
+  }
+
   function createDeleteBtn(row) {
     const deleteButton = doc.createElement('a');
     const column = doc.createElement('td');
@@ -35,11 +41,7 @@ const libraryModule = ((doc) => {
     column.appendChild(deleteButton);
     row.appendChild(column);
 
-    deleteButton.addEventListener('click', () => {
-      const bookIndexToDelete = row.getAttribute('data-index');
-      myLibrary.splice(bookIndexToDelete, 1);
-      containerTable.removeChild(row);
-    });
+    deleteButton.addEventListener('click', deleteBook.bind(this, row));
   }
 
   function notReadStyling(buttonIcon, icon, book) {
