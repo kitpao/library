@@ -36,7 +36,7 @@ const libraryModule = ((doc) => {
     row.appendChild(column);
 
     deleteButton.addEventListener('click', () => {
-      const bookIndexToDelete = row.getAttribute('data-index') - 1;
+      const bookIndexToDelete = row.getAttribute('data-index');
       myLibrary.splice(bookIndexToDelete, 1);
       containerTable.removeChild(row);
     });
@@ -97,7 +97,8 @@ const libraryModule = ((doc) => {
 
     const bookInfo = [author, title, pages, read];
 
-    row.setAttribute('data-index', id += 1);
+    row.setAttribute('data-index', id);
+    id += 1;
     bookInfo.forEach(property => {
       const column = doc.createElement('td');
 
