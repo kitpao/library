@@ -5,7 +5,7 @@ const documentMock = (() => ({
 }))();
 
 const libraryModule = ((doc) => {
-  const myLibrary = [];
+  const myLibrary = {};
   let id = 0;
   const containerTable = doc.querySelector('.library-body');
   const modalForm = doc.querySelector('.modal');
@@ -28,7 +28,7 @@ const libraryModule = ((doc) => {
 
   function deleteBook(row) {
     const bookIndexToDelete = row.getAttribute('data-index');
-    myLibrary.splice(bookIndexToDelete, 1);
+    delete myLibrary[bookIndexToDelete];
     containerTable.removeChild(row);
   }
 
@@ -100,7 +100,6 @@ const libraryModule = ((doc) => {
     const bookInfo = [author, title, pages, read];
 
     row.setAttribute('data-index', id);
-    id += 1;
     bookInfo.forEach(property => {
       const column = doc.createElement('td');
 
@@ -119,9 +118,9 @@ const libraryModule = ((doc) => {
   }
 
   function addLastBook() {
-    const lastBook = generateBookHTML(myLibrary[myLibrary.length - 1]);
-
+    const lastBook = generateBookHTML(myLibrary[id]);
     containerTable.appendChild(lastBook);
+    id += 1;
   }
 
   function hideForm() {
@@ -139,8 +138,7 @@ const libraryModule = ((doc) => {
       default:
         break;
     }
-
-    myLibrary.push(book);
+    myLibrary[id] = book;
   }
 
   function createBook(form) {
@@ -189,10 +187,14 @@ const libraryModule = ((doc) => {
   }
 
   function displayLibrary() {
-    myLibrary.forEach(book => {
-      const eachBook = generateBookHTML(book);
-      containerTable.appendChild(eachBook);
-    });
+    keys = Object.keys(myLibrary);
+    if (keys) {
+      keys.forEach(key => {
+        let book = myLibrary[key]
+        const eachBook = generateBookHTML(book);
+        containerTable.appendChild(eachBook);
+      });
+    }
   }
 
   return {
