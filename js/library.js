@@ -1,192 +1,208 @@
-const myLibrary = [];
+const documentMock = (() => ({
+  querySelector: (selector) => ({ // eslint-disable-line
+    innerHTML: null,
+  }),
+}))();
 
-function Book(author, title, pages = 0, read = false) {
-  this.author = author;
-  this.title = title;
-  this.pages = pages;
-  this.read = read;
-}
+const libraryModule = ((doc) => {
+  const myLibrary = {};
+  let id = 0;
+  const containerTable = doc.querySelector('.library-body');
+  const modalForm = doc.querySelector('.modal');
+  const submitBtn = doc.querySelector('.btn-submit');
+  const callingBtn = doc.querySelector('.btn-cancel');
+  const showBtn = doc.querySelector('.btn-show');
 
-function notReadStyling(buttonIcon, icon, book) {
-  buttonIcon.classList.add('waves-effect', 'waves-light', 'red', 'accent-2', 'btn');
-  buttonIcon.classList.remove('green');
-  buttonIcon.textContent = 'Not read';
-  icon.textContent = 'cancel';
-  book.read = false;
-}
 
-function readStyling(buttonIcon, icon, book) {
-  buttonIcon.classList.add('waves-effect', 'waves-light', 'green', 'btn');
-  buttonIcon.classList.remove('red', 'accent-2');
-  buttonIcon.textContent = 'Read';
-  icon.textContent = 'check_circle';
-  book.read = true;
-}
+  function Book(author, title, pages = 0, read = false) {
+    return {
+      author, title, pages, read,
+    };
+  }
 
-function toggler(buttonIcon, icon, book, readColumn) {
-  buttonIcon.addEventListener('click', () => {
+  function resetFields() {
+    const form = doc.forms[0];
+
+    form.reset();
+  }
+
+  function deleteBook(row) {
+    const bookIndexToDelete = row.getAttribute('data-index');
+    delete myLibrary[bookIndexToDelete];
+    containerTable.removeChild(row);
+  }
+
+  function createDeleteBtn(row) {
+    const deleteButton = doc.createElement('a');
+    const column = doc.createElement('td');
+    deleteButton.textContent = 'Delete';
+    deleteButton.classList.add('btn', 'red', 'lighten-3', 'waves-effect', 'waves-light');
+
+    column.appendChild(deleteButton);
+    row.appendChild(column);
+
+    deleteButton.addEventListener('click', deleteBook.bind(this, row));
+  }
+
+  function notReadStyling(buttonIcon, icon, book) {
+    buttonIcon.classList.add('waves-effect', 'waves-light', 'red', 'accent-2', 'btn');
+    buttonIcon.classList.remove('green');
+    buttonIcon.textContent = 'Not read';
+    icon.textContent = 'cancel';
+    book.read = false;
+  }
+
+  function readStyling(buttonIcon, icon, book) {
+    buttonIcon.classList.add('waves-effect', 'waves-light', 'green', 'btn');
+    buttonIcon.classList.remove('red', 'accent-2');
+    buttonIcon.textContent = 'Read';
+    icon.textContent = 'check_circle';
+    book.read = true;
+  }
+
+  function toggler(buttonIcon, icon, book, readColumn) {
+    buttonIcon.addEventListener('click', () => {
+      if (book.read) {
+        notReadStyling(buttonIcon, icon, book);
+      } else {
+        readStyling(buttonIcon, icon, book);
+      }
+      buttonIcon.appendChild(icon);
+      readColumn.appendChild(buttonIcon);
+    });
+  }
+
+  function iconize(readColumn, book) {
+    const buttonIcon = doc.createElement('a');
+    const icon = doc.createElement('i');
+
+    icon.classList.add('material-icons', 'right');
+
     if (book.read) {
-      notReadStyling(buttonIcon, icon, book);
-    } else {
       readStyling(buttonIcon, icon, book);
+    } else {
+      notReadStyling(buttonIcon, icon, book);
     }
+
     buttonIcon.appendChild(icon);
     readColumn.appendChild(buttonIcon);
-  });
-}
 
-function iconize(readColumn, book) {
-  const buttonIcon = document.createElement('a');
-  const icon = document.createElement('i');
-
-  icon.classList.add('material-icons', 'right');
-
-  if (book.read) {
-    readStyling(buttonIcon, icon, book);
-  } else {
-    notReadStyling(buttonIcon, icon, book);
+    toggler(buttonIcon, icon, book, readColumn);
   }
 
-  buttonIcon.appendChild(icon);
-  readColumn.appendChild(buttonIcon);
+  function generateBookHTML(book) {
+    const row = doc.createElement('tr');
 
-  toggler(buttonIcon, icon, book, readColumn);
-}
+    const {
+      author, title, pages, read,
+    } = book;
 
-function createDeleteBtn(row) {
-  const deleteButton = document.createElement('a');
-  const column = document.createElement('td');
-  deleteButton.textContent = 'Delete';
-  deleteButton.classList.add('btn', 'red', 'lighten-3', 'waves-effect', 'waves-light');
+    const bookInfo = [author, title, pages, read];
 
-  column.appendChild(deleteButton);
-  row.appendChild(column);
+    row.setAttribute('data-index', id);
+    bookInfo.forEach(property => {
+      const column = doc.createElement('td');
 
-  deleteButton.addEventListener('click', () => {
-    const table = document.querySelector('.library-body');
-    table.removeChild(row);
-  });
-}
+      if (property !== true && property !== false) {
+        column.textContent = property;
+      }
+      row.appendChild(column);
+    });
 
-function resetFields() {
-  const form = document.forms[0];
+    const readColumn = row.querySelector(':nth-child(4)');
 
-  form.reset();
-}
+    iconize(readColumn, book);
+    createDeleteBtn(row);
 
-function generateBookHTML(book) {
-  const row = document.createElement('tr');
+    return row;
+  }
 
-  const {
-    author, title, pages, read,
-  } = book;
+  function addLastBook() {
+    const lastBook = generateBookHTML(myLibrary[id]);
+    containerTable.appendChild(lastBook);
+  }
 
-  const bookInfo = [author, title, pages, read];
+  function hideForm() {
+    modalForm.classList.remove('modal-active');
+  }
 
-  bookInfo.forEach(property => {
-    const column = document.createElement('td');
-
-    if (property !== true && property !== false) {
-      column.textContent = property;
+  function addBookToLibrary(book) {
+    switch ('') {
+      case book.title:
+        hideForm();
+        return;
+      case book.author:
+        book.author = 'Anonymous';
+        break;
+      default:
+        break;
     }
-    row.appendChild(column);
-  });
+    myLibrary[id] = book;
+  }
 
-  const readColumn = row.querySelector(':nth-child(4)');
+  function createBook(form) {
+    const book = new Book();
 
-  iconize(readColumn, book);
-  createDeleteBtn(row);
+    book.author = form.elements.author.value;
+    book.title = form.elements.title.value;
+    book.pages = +form.elements.pages.value;
+    book.read = Boolean(+form.elements.read.value);
 
-  return row;
-}
+    return book;
+  }
 
-function addLastBook() {
-  const containerTable = document.querySelector('.library-body');
-  const lastBook = generateBookHTML(myLibrary[myLibrary.length - 1]);
+  function createAndSaveBook() {
+    const form = doc.forms[0];
 
-  containerTable.appendChild(lastBook);
-}
+    form.onsubmit = (e) => {
+      e.preventDefault();
 
-function hideForm() {
-  const modalForm = document.querySelector('.modal');
-
-  modalForm.classList.remove('modal-active');
-}
-
-function addBookToLibrary(book) {
-  switch ('') {
-    case book.title:
+      const book = createBook(form);
+      if (book.title !== '') {
+        addBookToLibrary(book);
+        addLastBook();
+        id += 1;
+      }
       hideForm();
-      return;
-    case book.author:
-      book.author = 'Anonymous';
-      break;
-    default:
-      break;
+      resetFields();
+    };
   }
 
-  myLibrary.push(book);
-}
+  function listenForCreateAndSaveBook() {
+    submitBtn.addEventListener('click', createAndSaveBook);
+  }
 
-function createBook(form) {
-  const book = new Book();
+  function listenForHideForm() {
+    callingBtn.addEventListener('click', hideForm);
+  }
 
-  book.author = form.elements.author.value;
-  book.title = form.elements.title.value;
-  book.pages = +form.elements.pages.value;
-  book.read = Boolean(+form.elements.read.value);
+  function showForm() {
+    modalForm.classList.add('modal-active');
+    listenForHideForm();
+    listenForCreateAndSaveBook();
+  }
 
-  return book;
-}
+  function listenForShowForm() {
+    showBtn.addEventListener('click', showForm);
+  }
 
-function createAndSaveBook() { // eslint-disable-line
-  const form = document.forms[0];
-
-  form.onsubmit = (e) => {
-    e.preventDefault();
-
-    const book = createBook(form);
-    if (book.title !== '') {
-      addBookToLibrary(book);
-      addLastBook();
+  function displayLibrary() {
+    const keys = Object.keys(myLibrary);
+    if (keys) {
+      keys.forEach(key => {
+        const book = myLibrary[key];
+        const eachBook = generateBookHTML(book);
+        containerTable.appendChild(eachBook);
+      });
     }
-    hideForm();
-    resetFields();
+  }
+
+  return {
+    myLibrary,
+    displayLibrary,
+    listenForShowForm,
   };
-}
+})(document || documentMock);
 
-function listenForCreateAndSaveBook() {
-  const submitBtn = document.querySelector('.btn-submit');
-
-  submitBtn.addEventListener('click', createAndSaveBook);
-}
-
-function listenForHideForm() {
-  const callingBtn = document.querySelector('.btn-cancel');
-  callingBtn.addEventListener('click', hideForm);
-}
-
-function showForm() { // eslint-disable-line
-  const modalForm = document.querySelector('.modal');
-
-  modalForm.classList.add('modal-active');
-  listenForHideForm();
-  listenForCreateAndSaveBook();
-}
-
-function listenForShowForm() {
-  const showBtn = document.querySelector('.btn-show');
-  showBtn.addEventListener('click', showForm);
-}
-
-function render() {
-  const containerTable = document.querySelector('.library-body');
-
-  myLibrary.forEach(book => {
-    const eachBook = generateBookHTML(book);
-    containerTable.appendChild(eachBook);
-  });
-}
-
-render();
-listenForShowForm();
+libraryModule.displayLibrary();
+libraryModule.listenForShowForm();
