@@ -1,17 +1,11 @@
-const documentMock = (() => ({
-  querySelector: (selector) => ({ // eslint-disable-line
-    innerHTML: null,
-  }),
-}))();
-
-const libraryModule = ((doc) => {
+class LibraryClass {
   const myLibrary = {};
   let id = 0;
-  const containerTable = doc.querySelector('.library-body');
-  const modalForm = doc.querySelector('.modal');
-  const submitBtn = doc.querySelector('.btn-submit');
-  const callingBtn = doc.querySelector('.btn-cancel');
-  const showBtn = doc.querySelector('.btn-show');
+  const containerTable = document.querySelector('.library-body');
+  const modalForm = document.querySelector('.modal');
+  const submitBtn = document.querySelector('.btn-submit');
+  const callingBtn = document.querySelector('.btn-cancel');
+  const showBtn = document.querySelector('.btn-show');
 
 
   function Book(author, title, pages = 0, read = false) {
@@ -21,7 +15,7 @@ const libraryModule = ((doc) => {
   }
 
   function resetFields() {
-    const form = doc.forms[0];
+    const form = document.forms[0];
 
     form.reset();
   }
@@ -33,8 +27,8 @@ const libraryModule = ((doc) => {
   }
 
   function createDeleteBtn(row) {
-    const deleteButton = doc.createElement('a');
-    const column = doc.createElement('td');
+    const deleteButton = document.createElement('a');
+    const column = document.createElement('td');
     deleteButton.textContent = 'Delete';
     deleteButton.classList.add('btn', 'red', 'lighten-3', 'waves-effect', 'waves-light');
 
@@ -73,8 +67,8 @@ const libraryModule = ((doc) => {
   }
 
   function iconize(readColumn, book) {
-    const buttonIcon = doc.createElement('a');
-    const icon = doc.createElement('i');
+    const buttonIcon = document.createElement('a');
+    const icon = document.createElement('i');
 
     icon.classList.add('material-icons', 'right');
 
@@ -91,7 +85,7 @@ const libraryModule = ((doc) => {
   }
 
   function generateBookHTML(book) {
-    const row = doc.createElement('tr');
+    const row = document.createElement('tr');
 
     const {
       author, title, pages, read,
@@ -101,7 +95,7 @@ const libraryModule = ((doc) => {
 
     row.setAttribute('data-index', id);
     bookInfo.forEach(property => {
-      const column = doc.createElement('td');
+      const column = document.createElement('td');
 
       if (property !== true && property !== false) {
         column.textContent = property;
@@ -152,7 +146,7 @@ const libraryModule = ((doc) => {
   }
 
   function createAndSaveBook() {
-    const form = doc.forms[0];
+    const form = document.forms[0];
 
     form.onsubmit = (e) => {
       e.preventDefault();
@@ -202,7 +196,7 @@ const libraryModule = ((doc) => {
     displayLibrary,
     listenForShowForm,
   };
-})(document || documentMock);
+}
 
 libraryModule.displayLibrary();
 libraryModule.listenForShowForm();
