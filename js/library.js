@@ -205,5 +205,4 @@ const libraryModule = ((doc) => {
 })(document || documentMock);
 
 libraryModule.displayLibrary();
-
 libraryModule.listenForShowForm();
