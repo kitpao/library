@@ -187,10 +187,10 @@ const libraryModule = ((doc) => {
   }
 
   function displayLibrary() {
-    keys = Object.keys(myLibrary);
+    const keys = Object.keys(myLibrary);
     if (keys) {
       keys.forEach(key => {
-        let book = myLibrary[key]
+        const book = myLibrary[key];
         const eachBook = generateBookHTML(book);
         containerTable.appendChild(eachBook);
       });
