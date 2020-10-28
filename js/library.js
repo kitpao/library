@@ -1,32 +1,36 @@
 class LibraryClass {
-  const myLibrary = {};
-  let id = 0;
-  const containerTable = document.querySelector('.library-body');
-  const modalForm = document.querySelector('.modal');
-  const submitBtn = document.querySelector('.btn-submit');
-  const callingBtn = document.querySelector('.btn-cancel');
-  const showBtn = document.querySelector('.btn-show');
+
+  constructor(){
+    const myLibrary = {};
+    let id = 0;
+  }
+  
+  containerTable = document.querySelector('.library-body');
+  modalForm = document.querySelector('.modal');
+  submitBtn = document.querySelector('.btn-submit');
+  callingBtn = document.querySelector('.btn-cancel');
+  showBtn = document.querySelector('.btn-show');
 
 
-  function Book(author, title, pages = 0, read = false) {
+  Book(author, title, pages = 0, read = false) {
     return {
       author, title, pages, read,
     };
   }
 
-  function resetFields() {
+  resetFields() {
     const form = document.forms[0];
 
     form.reset();
   }
 
-  function deleteBook(row) {
+  deleteBook(row) {
     const bookIndexToDelete = row.getAttribute('data-index');
     delete myLibrary[bookIndexToDelete];
     containerTable.removeChild(row);
   }
 
-  function createDeleteBtn(row) {
+  createDeleteBtn(row) {
     const deleteButton = document.createElement('a');
     const column = document.createElement('td');
     deleteButton.textContent = 'Delete';
@@ -38,7 +42,7 @@ class LibraryClass {
     deleteButton.addEventListener('click', deleteBook.bind(this, row));
   }
 
-  function notReadStyling(buttonIcon, icon, book) {
+  notReadStyling(buttonIcon, icon, book) {
     buttonIcon.classList.add('waves-effect', 'waves-light', 'red', 'accent-2', 'btn');
     buttonIcon.classList.remove('green');
     buttonIcon.textContent = 'Not read';
@@ -46,7 +50,7 @@ class LibraryClass {
     book.read = false;
   }
 
-  function readStyling(buttonIcon, icon, book) {
+  readStyling(buttonIcon, icon, book) {
     buttonIcon.classList.add('waves-effect', 'waves-light', 'green', 'btn');
     buttonIcon.classList.remove('red', 'accent-2');
     buttonIcon.textContent = 'Read';
@@ -54,7 +58,7 @@ class LibraryClass {
     book.read = true;
   }
 
-  function toggler(buttonIcon, icon, book, readColumn) {
+  toggler(buttonIcon, icon, book, readColumn) {
     buttonIcon.addEventListener('click', () => {
       if (book.read) {
         notReadStyling(buttonIcon, icon, book);
@@ -66,7 +70,7 @@ class LibraryClass {
     });
   }
 
-  function iconize(readColumn, book) {
+  iconize(readColumn, book) {
     const buttonIcon = document.createElement('a');
     const icon = document.createElement('i');
 
@@ -84,7 +88,7 @@ class LibraryClass {
     toggler(buttonIcon, icon, book, readColumn);
   }
 
-  function generateBookHTML(book) {
+  generateBookHTML(book) {
     const row = document.createElement('tr');
 
     const {
@@ -111,16 +115,16 @@ class LibraryClass {
     return row;
   }
 
-  function addLastBook() {
+  addLastBook() {
     const lastBook = generateBookHTML(myLibrary[id]);
     containerTable.appendChild(lastBook);
   }
 
-  function hideForm() {
+  hideForm() {
     modalForm.classList.remove('modal-active');
   }
 
-  function addBookToLibrary(book) {
+  addBookToLibrary(book) {
     switch ('') {
       case book.title:
         hideForm();
@@ -134,7 +138,7 @@ class LibraryClass {
     myLibrary[id] = book;
   }
 
-  function createBook(form) {
+  createBook(form) {
     const book = new Book();
 
     book.author = form.elements.author.value;
@@ -145,7 +149,7 @@ class LibraryClass {
     return book;
   }
 
-  function createAndSaveBook() {
+  createAndSaveBook() {
     const form = document.forms[0];
 
     form.onsubmit = (e) => {
@@ -162,25 +166,25 @@ class LibraryClass {
     };
   }
 
-  function listenForCreateAndSaveBook() {
+  listenForCreateAndSaveBook() {
     submitBtn.addEventListener('click', createAndSaveBook);
   }
 
-  function listenForHideForm() {
+  listenForHideForm() {
     callingBtn.addEventListener('click', hideForm);
   }
 
-  function showForm() {
+  showForm() {
     modalForm.classList.add('modal-active');
     listenForHideForm();
     listenForCreateAndSaveBook();
   }
 
-  function listenForShowForm() {
+   listenForShowForm() {
     showBtn.addEventListener('click', showForm);
   }
 
-  function displayLibrary() {
+  displayLibrary() {
     const keys = Object.keys(myLibrary);
     if (keys) {
       keys.forEach(key => {
@@ -190,12 +194,6 @@ class LibraryClass {
       });
     }
   }
-
-  return {
-    myLibrary,
-    displayLibrary,
-    listenForShowForm,
-  };
 }
 
 libraryModule.displayLibrary();
