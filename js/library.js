@@ -1,39 +1,39 @@
 class LibraryClass {
   myLibrary = {};
 
-  id = 0;
+  #id = 0;
 
-  containerTable = document.querySelector('.library-body');
+  #containerTable = document.querySelector('.library-body');
 
-  modalForm = document.querySelector('.modal');
+  #modalForm = document.querySelector('.modal');
 
-  submitBtn = document.querySelector('.btn-submit');
+  #submitBtn = document.querySelector('.btn-submit');
 
-  callingBtn = document.querySelector('.btn-cancel');
+  #callingBtn = document.querySelector('.btn-cancel');
 
-  showBtn = document.querySelector('.btn-show');
+  #showBtn = document.querySelector('.btn-show');
 
 
-  Book = (author, title, pages = 0, read = false) => {
+  #Book = (author, title, pages = 0, read = false) => {
     this.author = author;
     this.title = title;
     this.pages = pages;
     this.read = read;
   };
 
-  resetFields = () => {
+  #resetFields = () => {
     const form = document.forms[0];
 
     form.reset();
   };
 
-  deleteBook = (row) => {
+  #deleteBook = (row) => {
     const bookIndexToDelete = row.getAttribute('data-index');
     delete this.myLibrary[bookIndexToDelete];
-    this.containerTable.removeChild(row);
+    this.#containerTable.removeChild(row);
   };
 
-  createDeleteBtn = (row) => {
+  #createDeleteBtn = (row) => {
     const deleteButton = document.createElement('a');
     const column = document.createElement('td');
     deleteButton.textContent = 'Delete';
@@ -42,10 +42,10 @@ class LibraryClass {
     column.appendChild(deleteButton);
     row.appendChild(column);
 
-    deleteButton.addEventListener('click', this.deleteBook.bind(this, row));
+    deleteButton.addEventListener('click', this.#deleteBook.bind(this, row));
   };
 
-  notReadStyling = (buttonIcon, icon, book) => {
+  #notReadStyling = (buttonIcon, icon, book) => {
     buttonIcon.classList.add('waves-effect', 'waves-light', 'red', 'accent-2', 'btn');
     buttonIcon.classList.remove('green');
     buttonIcon.textContent = 'Not read';
@@ -53,7 +53,7 @@ class LibraryClass {
     book.read = false;
   };
 
-  readStyling = (buttonIcon, icon, book) => {
+  #readStyling = (buttonIcon, icon, book) => {
     buttonIcon.classList.add('waves-effect', 'waves-light', 'green', 'btn');
     buttonIcon.classList.remove('red', 'accent-2');
     buttonIcon.textContent = 'Read';
@@ -61,37 +61,37 @@ class LibraryClass {
     book.read = true;
   }
 
-  toggler = (buttonIcon, icon, book, readColumn) => {
+  #toggler = (buttonIcon, icon, book, readColumn) => {
     buttonIcon.addEventListener('click', () => {
       if (book.read) {
-        this.notReadStyling(buttonIcon, icon, book);
+        this.#notReadStyling(buttonIcon, icon, book);
       } else {
-        this.readStyling(buttonIcon, icon, book);
+        this.#readStyling(buttonIcon, icon, book);
       }
       buttonIcon.appendChild(icon);
       readColumn.appendChild(buttonIcon);
     });
   }
 
-  iconize = (readColumn, book) => {
+  #iconize = (readColumn, book) => {
     const buttonIcon = document.createElement('a');
     const icon = document.createElement('i');
 
     icon.classList.add('material-icons', 'right');
 
     if (book.read) {
-      this.readStyling(buttonIcon, icon, book);
+      this.#readStyling(buttonIcon, icon, book);
     } else {
-      this.notReadStyling(buttonIcon, icon, book);
+      this.#notReadStyling(buttonIcon, icon, book);
     }
 
     buttonIcon.appendChild(icon);
     readColumn.appendChild(buttonIcon);
 
-    this.toggler(buttonIcon, icon, book, readColumn);
+    this.#toggler(buttonIcon, icon, book, readColumn);
   }
 
-  generateBookHTML = (book) => {
+  #generateBookHTML = (book) => {
     const row = document.createElement('tr');
 
     const {
@@ -100,7 +100,7 @@ class LibraryClass {
 
     const bookInfo = [author, title, pages, read];
 
-    row.setAttribute('data-index', this.id);
+    row.setAttribute('data-index', this.#id);
     bookInfo.forEach(property => {
       const column = document.createElement('td');
 
@@ -112,25 +112,25 @@ class LibraryClass {
 
     const readColumn = row.querySelector(':nth-child(4)');
 
-    this.iconize(readColumn, book);
-    this.createDeleteBtn(row);
+    this.#iconize(readColumn, book);
+    this.#createDeleteBtn(row);
 
     return row;
   }
 
-  addLastBook = () => {
-    const lastBook = this.generateBookHTML(this.myLibrary[this.id]);
-    this.containerTable.appendChild(lastBook);
+  #addLastBook = () => {
+    const lastBook = this.#generateBookHTML(this.myLibrary[this.#id]);
+    this.#containerTable.appendChild(lastBook);
   }
 
-  hideForm = () => {
-    this.modalForm.classList.remove('modal-active');
+  #hideForm = () => {
+    this.#modalForm.classList.remove('modal-active');
   }
 
-  addBookToLibrary = (book) => {
+  #addBookToLibrary = (book) => {
     switch ('') {
       case book.title:
-        this.hideForm();
+        this.#hideForm();
         return;
       case book.author:
         book.author = 'Anonymous';
@@ -138,11 +138,11 @@ class LibraryClass {
       default:
         break;
     }
-    this.myLibrary[this.id] = book;
+    this.myLibrary[this.#id] = book;
   }
 
-  createBook = (form) => {
-    const book = this.Book;
+  #createBook = (form) => {
+    const book = this.#Book;
 
     book.author = (form.elements.author.value || 'Anonymous');
     book.title = form.elements.title.value;
@@ -152,39 +152,39 @@ class LibraryClass {
     return book;
   }
 
-  createAndSaveBook = () => {
+  #createAndSaveBook = () => {
     const form = document.forms[0];
 
     form.onsubmit = (e) => {
       e.preventDefault();
 
-      const book = this.createBook(form);
+      const book = this.#createBook(form);
       if (book.title !== '') {
-        this.addBookToLibrary(book);
-        this.addLastBook();
-        this.id += 1;
+        this.#addBookToLibrary(book);
+        this.#addLastBook();
+        this.#id += 1;
       }
-      this.hideForm();
-      this.resetFields();
+      this.#hideForm();
+      this.#resetFields();
     };
   }
 
-  listenForCreateAndSaveBook = () => {
-    this.submitBtn.addEventListener('click', this.createAndSaveBook);
+  #listenForCreateAndSaveBook = () => {
+    this.#submitBtn.addEventListener('click', this.#createAndSaveBook);
   }
 
-  listenForHideForm = () => {
-    this.callingBtn.addEventListener('click', this.hideForm);
+  #listenForHideForm = () => {
+    this.#callingBtn.addEventListener('click', this.#hideForm);
   }
 
-  showForm = () => {
-    this.modalForm.classList.add('modal-active');
-    this.listenForHideForm();
-    this.listenForCreateAndSaveBook();
+  #showForm = () => {
+    this.#modalForm.classList.add('modal-active');
+    this.#listenForHideForm();
+    this.#listenForCreateAndSaveBook();
   }
 
   listenForShowForm = () => {
-    this.showBtn.addEventListener('click', this.showForm);
+    this.#showBtn.addEventListener('click', this.#showForm);
   }
 
   displayLibrary = () => {
@@ -192,8 +192,8 @@ class LibraryClass {
     if (keys) {
       keys.forEach(key => {
         const book = this.myLibrary[key];
-        const eachBook = this.generateBookHTML(book);
-        this.containerTable.appendChild(eachBook);
+        const eachBook = this.#generateBookHTML(book);
+        this.#containerTable.appendChild(eachBook);
       });
     }
   }
