@@ -1,3 +1,16 @@
+class Book {
+  constructor(author, title, pages = 0, read = false) {
+    this.author = author;
+    this.title = title;
+    this.pages = pages;
+    this.read = read;
+
+    // return {
+    //  author, title, pages, read,
+    // };
+  }
+}
+
 class LibraryClass {
   myLibrary = {};
 
@@ -12,14 +25,6 @@ class LibraryClass {
   #callingBtn = document.querySelector('.btn-cancel');
 
   #showBtn = document.querySelector('.btn-show');
-
-
-  #Book = (author, title, pages = 0, read = false) => {
-    this.author = author;
-    this.title = title;
-    this.pages = pages;
-    this.read = read;
-  };
 
   #resetFields = () => {
     const form = document.forms[0];
@@ -142,7 +147,7 @@ class LibraryClass {
   }
 
   #createBook = (form) => {
-    const book = this.#Book;
+    const book = new Book();
 
     book.author = (form.elements.author.value || 'Anonymous');
     book.title = form.elements.title.value;
