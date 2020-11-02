@@ -1,13 +1,8 @@
 class Book {
   constructor(author, title, pages = 0, read = false) {
-    this.author = author;
-    this.title = title;
-    this.pages = pages;
-    this.read = read;
-
-    // return {
-    //  author, title, pages, read,
-    // };
+    return {
+      author, title, pages, read,
+    };
   }
 }
 
