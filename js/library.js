@@ -1,10 +1,4 @@
-class Book {
-  constructor(author, title, pages = 0, read = false) {
-    return {
-      author, title, pages, read,
-    };
-  }
-}
+import Book from './book.js'; // eslint-disable-line
 
 class LibraryClass {
   myLibrary = {};
